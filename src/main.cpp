@@ -3,6 +3,7 @@
 #include <actionlib/client/simple_action_client.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/String.h>
+#include <move_base_msgs/MoveBaseResult.h>
 
 
 //ros acml_pose subscribe status check
@@ -11,11 +12,12 @@
 enum State{
 	STATE_IDLE,
 	STATE_GOAL,
-	STATE_MONITORING
+	STATE_MONITORING //future work
 };
 
 State my_state;
 
+//should add state change idle -> move
 
 
 void google_assistant_callback(const std_msgs::String::ConstPtr& msg){
@@ -31,6 +33,18 @@ void google_assistant_callback(const std_msgs::String::ConstPtr& msg){
 }
 
 
+void move_base_callback(&msg){
+	ROS_INFO("move base callback %s", msg.status.text);
+
+	if(my_state == STATE_GOAL){
+		if(msg.status.status == 3){
+			ROS_INFO("change")
+			my_state = STATE_IDLE;
+		}
+	}
+}
+
+
 
 int main(int argc, char** argv){
 
@@ -38,19 +52,22 @@ int main(int argc, char** argv){
 
 	ros::NodeHandle nh;
 	ros::Publisher ros_move_pub = nh.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 10);
-	ros::Subscriber ros_state_manage = nh.subscribe("GA", 10, google_assistant_callback);
+	
+	ros::Subscriber ga_state_manager = nh.subscribe("GA", 10, google_assistant_callback);
+	ros::Subscriber robot_state_manager = nh.subscribe("/move_base/result", 10, move_base_callback);
 
 	geometry_msgs::PoseStamped goal;
 
 	ros::Rate loop_rate(1);
 
-	ros::Time
+
 
 
 	goal.header.frame_id = "map";
 	//goal.header.stamp = ros::Time::now();
-	goal.pose.position.x = -1;
-	goal.pose.position.y = -1;
+	goal.pose.position.x = -0.2;
+	goal.pose.position.y = =0.8;
+	goal.pose.orientation.w = 0.0;
 	
 
 	my_state = STATE_IDLE;
@@ -67,6 +84,10 @@ int main(int argc, char** argv){
 
 		if(my_state == STATE_GOAL && msg == "finish"){
 			my_state = STATE_IDLE;
+		}
+
+		if(my_state == STATE_IDLE){
+			ros_move_pub.publish()
 		}
 
 		ros::spinOnce();
