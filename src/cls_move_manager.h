@@ -15,6 +15,14 @@ enum State{
         STATE_MONITORING //future work
 };
 
+typedef struct _image_coordi{
+    int x;
+    int ;
+} image_coordi;
+
+
+
+
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 class cls_move_manager{
@@ -34,11 +42,15 @@ public:
             ROS_INFO("Waiting for the move_base action server to come up");
         }
 
+        ROS_INFO("Setup predefined goals\n");
+        set_turtlebot_goal();
+
 
     };
     ~ cls_move_manager() {
         delete ac;
     };
+    void control_turtlebot();
 
 
 
@@ -57,6 +69,20 @@ private:
     ros::Publisher velocity_ctl;
     move_base_msgs::MoveBaseGoal goal;
     geometry_msgs::Twist stop_msg;
+
+    constexpr float resolution = 0.05;
+    constexpr float origin_x = -10.0;
+    constexpr float origin_y = -10.0;
+    constexpr int image_size = 384;
+
+    geometry_msgs::Twist gemometry_goal[3];
+    image_coordi image_goal[3];
+    std::string string_goal[3] = {"거실\n", "주방\n", "화장실\n"};
+    std::string destination;
+
+
+
+
     
 private :
 
@@ -67,15 +93,18 @@ private :
         stop_msg.linear.y = 0;
         stop_msg.angular.z = 0;
 
-        goal.target_pose.header.frame_id = "base_link";
+        goal.target_pose.header.frame_id = "map";
         goal.target_pose.header.stamp = ros::Time::now();
         goal.target_pose.pose.position.x = 1.0;
         goal.target_pose.pose.orientation.w = 1.0;
 
     };
 
-    void control_turtlebot();
+    geometry_msgs::Twist convert_image_to_geometry(img_coordi pt);
+    void set_turtlebot_goal();
+    int parse_destination_to_number(std::string destination);
 
+    
 
 
 
