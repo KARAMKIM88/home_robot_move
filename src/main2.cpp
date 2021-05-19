@@ -1,10 +1,4 @@
-
 #include "cls_move_manager.h"
-
-
-
-
-
 
 int main(int argc, char** argv){
     ros::init(argc, argv, "home_robot_move");

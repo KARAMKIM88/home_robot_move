@@ -15,9 +15,14 @@ enum State{
         STATE_MONITORING //future work
 };
 
-typedef struct _image_coordi{
+typedef struct _image_coordi
+{
+
+    _image_coordi() {};
+    _image_coordi(int _x, int _y) : x(_x), y(_y){}
     int x;
-    int ;
+    int y;
+
 } image_coordi;
 
 
@@ -70,12 +75,12 @@ private:
     move_base_msgs::MoveBaseGoal goal;
     geometry_msgs::Twist stop_msg;
 
-    constexpr float resolution = 0.05;
-    constexpr float origin_x = -10.0;
-    constexpr float origin_y = -10.0;
-    constexpr int image_size = 384;
+    static constexpr float resolution = 0.05;
+    static constexpr float origin_x = -10.0;
+    static constexpr float origin_y = -10.0;
+    static constexpr int image_size = 384;
 
-    geometry_msgs::Twist gemometry_goal[3];
+    geometry_msgs::Twist geometry_goals[3];
     image_coordi image_goal[3];
     std::string string_goal[3] = {"거실\n", "주방\n", "화장실\n"};
     std::string destination;
@@ -100,7 +105,7 @@ private :
 
     };
 
-    geometry_msgs::Twist convert_image_to_geometry(img_coordi pt);
+    geometry_msgs::Twist convert_image_to_geometry(image_coordi pt);
     void set_turtlebot_goal();
     int parse_destination_to_number(std::string destination);
 

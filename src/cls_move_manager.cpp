@@ -32,7 +32,7 @@ bool cls_move_manager::subs_flags = false;
 void cls_move_manager::google_assistant_callback(const std_msgs::String::ConstPtr &msg)
 {
     ROS_INFO("I heard : [%s]", msg->data.c_str());
-    destination = msg->data;
+    destination = std::string(msg->data.c_str());
 
     if (my_state == STATE_MONITORING)
     {
@@ -65,7 +65,7 @@ void cls_move_manager::control_turtlebot()
         {
 
             int goal_index = parse_destination_to_number(destination);
-            ac->sendGoal(gemometry_goal[goal_index]);
+            ac->sendGoal(geometry_goals[goal_index]);
             ac->waitForResult();
 
             if (ac->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
@@ -83,7 +83,7 @@ void cls_move_manager::control_turtlebot()
     }
 }
 
-geometry_msgs::Twist cls_move_manager::convert_image_to_geometry(img_coordi pt){
+geometry_msgs::Twist cls_move_manager::convert_image_to_geometry(image_coordi pt){
 
     geometry_msgs::Twist geometry_info;
 
@@ -110,8 +110,8 @@ void cls_move_manager::set_turtlebot_goal(){
     image_goal[1] = image_coordi(199, 147);
     image_goal[2] = image_coordi(165, 199);
 
-    for(i = 0; i<3; ++i){
-        geometry_goal[i] = convert_image_to_geometry(image_goal[i]);
+    for(int i = 0; i<3; ++i){
+        geometry_goals[i] = convert_image_to_geometry(image_goal[i]);
     }
 
 }
