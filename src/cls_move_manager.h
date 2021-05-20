@@ -34,6 +34,7 @@ class cls_move_manager{
 
 public:
     cls_move_manager(){
+         std::locale::global(std::locale("ko_KR.UTF-8"));
 
         assign_control_value();
         
@@ -80,10 +81,10 @@ private:
     static constexpr float origin_y = -10.0;
     static constexpr int image_size = 384;
 
-    geometry_msgs::Twist geometry_goals[3];
+    move_base_msgs::MoveBaseGoal geometry_goals[3];
     image_coordi image_goal[3];
-    std::string string_goal[3] = {"거실\n", "주방\n", "화장실\n"};
-    std::string destination;
+    std::string string_goal[3] = {"거실", "주방", "화장실"};
+    static std::string destination;
 
 
 
@@ -105,7 +106,7 @@ private :
 
     };
 
-    geometry_msgs::Twist convert_image_to_geometry(image_coordi pt);
+    move_base_msgs::MoveBaseGoal convert_image_to_geometry(image_coordi pt);
     void set_turtlebot_goal();
     int parse_destination_to_number(std::string destination);
 

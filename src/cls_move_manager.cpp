@@ -2,6 +2,7 @@
 
 int cls_move_manager::my_state = STATE_IDLE;
 bool cls_move_manager::subs_flags = false;
+std::string cls_move_manager::destination;
 
 /*
 
@@ -65,17 +66,27 @@ void cls_move_manager::control_turtlebot()
         {
 
             int goal_index = parse_destination_to_number(destination);
-            ac->sendGoal(geometry_goals[goal_index]);
-            ac->waitForResult();
-
-            if (ac->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-            {
+            ROS_INFO("the goal index : %d \n", goal_index);
+            if(goal_index == -1){
+                ROS_INFO("Invalid location \n");
+            }else{
+                geometry_goals[goal_index].target_pose.header.stamp = ros::Time::now();
+                ac->sendGoal(geometry_goals[goal_index]);
                 my_state = STATE_GOAL;
-                ROS_INFO("Hooray, the base moved 1 meter forward");
-            }
-            else
-                ROS_INFO("The base failed to move forward 1 meter for some reason");
+                ac->waitForResult();
 
+                if (ac->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+                {
+                    my_state = STATE_IDLE;
+                    ROS_INFO("Hooray, the base moved 1 meter forward");
+                }
+                else
+                    ROS_INFO("The base failed to move forward 1 meter for some reason");
+
+
+            }
+
+            
             subs_flags = false;
         }
 
@@ -83,13 +94,14 @@ void cls_move_manager::control_turtlebot()
     }
 }
 
-geometry_msgs::Twist cls_move_manager::convert_image_to_geometry(image_coordi pt){
+move_base_msgs::MoveBaseGoal cls_move_manager::convert_image_to_geometry(image_coordi pt){
 
-    geometry_msgs::Twist geometry_info;
+    move_base_msgs::MoveBaseGoal geometry_info;
 
     geometry_info.target_pose.header.frame_id = "map";
     geometry_info.target_pose.pose.position.x = origin_x + resolution * pt.x;
     geometry_info.target_pose.pose.position.y = origin_y + resolution * (image_size - pt.y);
+    geometry_info.target_pose.pose.orientation.w = 1.0;
 
 
     return geometry_info;
