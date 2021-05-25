@@ -132,9 +132,10 @@ int cls_move_manager::parse_destination_to_number(std::string destination){
 
     int goal_index = -1;
 
+    ssize_t pos;
     for(int i = 0; i<3; ++i){
-        int equal = string_goal[i].compare(destination);
-        if(equal == 0)
+        
+        if((pos = destination.find(string_goal[i])) != std::string::npos)
         {
             goal_index = i;
             break;
