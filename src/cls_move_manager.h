@@ -79,11 +79,12 @@ private:
     static constexpr float resolution = 0.05;
     static constexpr float origin_x = -10.0;
     static constexpr float origin_y = -10.0;
-    static constexpr int image_size = 384;
+    static constexpr int image_w = 384;
+    static constexpr int image_h = 608;
 
     move_base_msgs::MoveBaseGoal geometry_goals[3];
     image_coordi image_goal[3];
-    std::string string_goal[3] = {"거실", "주방", "화장실"};
+    std::string string_goal[3] = {"문 앞", "제자리", "문 앞"};
     static std::string destination;
 
 

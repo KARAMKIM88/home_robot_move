@@ -100,8 +100,9 @@ move_base_msgs::MoveBaseGoal cls_move_manager::convert_image_to_geometry(image_c
 
     geometry_info.target_pose.header.frame_id = "map";
     geometry_info.target_pose.pose.position.x = origin_x + resolution * pt.x;
-    geometry_info.target_pose.pose.position.y = origin_y + resolution * (image_size - pt.y);
+    geometry_info.target_pose.pose.position.y = origin_y + resolution * (image_h - pt.y);
     geometry_info.target_pose.pose.orientation.w = 1.0;
+
 
 
     return geometry_info;
@@ -118,13 +119,30 @@ void cls_move_manager::set_turtlebot_goal(){
 
 */
 
-    image_goal[0] = image_coordi(243, 198);
-    image_goal[1] = image_coordi(199, 147);
-    image_goal[2] = image_coordi(165, 199);
-
+    image_goal[0] = image_coordi(215, 395);
+    image_goal[1] = image_coordi(159, 353);
+    image_goal[2] = image_coordi(170, 232);
+/*
     for(int i = 0; i<3; ++i){
         geometry_goals[i] = convert_image_to_geometry(image_goal[i]);
     }
+*/
+
+
+
+    geometry_goals[0].target_pose.header.frame_id = "map";
+    geometry_goals[0].target_pose.pose.position.x = 3.04499912262;
+    geometry_goals[0].target_pose.pose.position.y = -0.950000405312;
+    geometry_goals[0].target_pose.pose.orientation.z = -0.707107091669;
+    geometry_goals[0].target_pose.pose.orientation.w = 0.707106470704;
+
+    geometry_goals[1].target_pose.header.frame_id = "map";
+    geometry_goals[1].target_pose.pose.position.x = 0;
+    geometry_goals[1].target_pose.pose.position.y = 0;
+    geometry_goals[1].target_pose.pose.orientation.z = 1.0;
+    geometry_goals[1].target_pose.pose.orientation.w = 0;
+
+
 
 }
 
