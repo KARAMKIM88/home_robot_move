@@ -4,6 +4,8 @@ int cls_move_manager::my_state = STATE_IDLE;
 bool cls_move_manager::subs_flags = false;
 std::string cls_move_manager::destination;
 
+constexpr int TIME_TO_SLEEP = 7000;
+
 /*
 
     while(ros::ok()){
@@ -47,6 +49,42 @@ void cls_move_manager::google_assistant_callback(const std_msgs::String::ConstPt
         subs_flags = true;
     }
 }
+
+
+
+void cls_move_manager::control_turtlebot_velocity()
+{
+
+    while (ros::ok())
+    {
+
+        if (my_state == STATE_MONITORING && subs_flags == true)
+        {
+
+            ROS_INFO("my state change MONITERING TO IDLE");
+            velocity_ctl.publish(stop_msg);
+            my_state = STATE_IDLE;
+            subs_flags = false;
+        }
+        else if (my_state == STATE_IDLE && subs_flags == true)
+        {
+
+            int goal_index = parse_destination_to_number(destination);
+            velocity_ctl.publish(vel_msg[goal_index]);
+            sleep_for(std::chrono::milliseconds(TIME_TO_SLEEP));
+           
+
+            velocity_ctl.publish(stop_msg);
+
+            
+            subs_flags = false;
+        }
+
+        ros::spinOnce();
+    }
+}
+
+
 
 void cls_move_manager::control_turtlebot()
 {
@@ -137,8 +175,8 @@ void cls_move_manager::set_turtlebot_goal(){
     geometry_goals[0].target_pose.pose.orientation.w = 0.707106470704;
 
     geometry_goals[1].target_pose.header.frame_id = "map";
-    geometry_goals[1].target_pose.pose.position.x = 0;
-    geometry_goals[1].target_pose.pose.position.y = 0;
+    geometry_goals[1].target_pose.pose.position.x = 0.07;
+    geometry_goals[1].target_pose.pose.position.y = 0.07;
     geometry_goals[1].target_pose.pose.orientation.z = 1.0;
     geometry_goals[1].target_pose.pose.orientation.w = 0;
 

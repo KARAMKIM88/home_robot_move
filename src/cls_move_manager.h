@@ -8,6 +8,9 @@
 #include <geometry_msgs/Twist.h>
 #include <thread>
 
+using std::this_thread::sleep_for;
+
+
 
 enum State{
         STATE_IDLE,
@@ -57,6 +60,7 @@ public:
         delete ac;
     };
     void control_turtlebot();
+    void control_turtlebot_velocity();
 
 
 
@@ -82,10 +86,13 @@ private:
     static constexpr int image_w = 384;
     static constexpr int image_h = 608;
 
+
     move_base_msgs::MoveBaseGoal geometry_goals[3];
     image_coordi image_goal[3];
-    std::string string_goal[3] = {"문 앞", "제자리", "문 앞"};
+    std::string string_goal[3] = {"앞", "뒤", "옆"};
+
     static std::string destination;
+    geometry_msgs::Twist vel_msg[3];
 
 
 
@@ -105,11 +112,31 @@ private :
         goal.target_pose.pose.position.x = 1.0;
         goal.target_pose.pose.orientation.w = 1.0;
 
+
+        vel_msg[0].linear.x = 0.05;
+        vel_msg[0].linear.y = 0.0;
+        vel_msg[0].linear.z = 0.0;
+        vel_msg[0].angular.z = 0.0;
+
+        vel_msg[1].linear.x = -0.05;
+        vel_msg[1].linear.y = 0.0;
+        vel_msg[1].linear.z = 0.0;
+        vel_msg[1].angular.z = 0.0;
+
+        vel_msg[2].linear.x = 0.02;
+        vel_msg[2].linear.y = 0.0;
+        vel_msg[2].linear.z = 0.0;
+        vel_msg[2].angular.z = 0.003;
+
+
+
+
     };
 
     move_base_msgs::MoveBaseGoal convert_image_to_geometry(image_coordi pt);
     void set_turtlebot_goal();
     int parse_destination_to_number(std::string destination);
+    
 
     
 
